@@ -11,3 +11,7 @@ Once you have Rust installed, you can build the Ore CLI by running the following
 ```sh
 cargo build --release
 ```
+
+```sh
+./mine.sh --rpc https://api.mainnet-beta.solana.com/
+```
