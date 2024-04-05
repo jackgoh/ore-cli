@@ -13,5 +13,6 @@ cargo build --release
 ```
 
 ```sh
-./mine.sh --rpc https://api.mainnet-beta.solana.com/
+chmod +x mine.sh
+./mine.sh --rpc https://api.mainnet-beta.solana.com/ --keypair ~/.config/solana/id.json
 ```
