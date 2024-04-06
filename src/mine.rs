@@ -95,6 +95,7 @@ impl Miner {
                         break;
                     }
                     Err(_err) => {
+                        break;
                         // TODO
                     }
                 }
@@ -156,7 +157,8 @@ impl Miner {
                     move || {
                         let n = u64::MAX.saturating_div(threads).saturating_mul(i);
                         let mut next_hash: KeccakHash;
-                        let mut nonce: u64 = n;
+                        let index = rand::thread_rng().gen_range((n + 1)..n + 10000000000);
+                        let mut nonce: u64 = n + index;
                         loop {
                             next_hash = hashv(&[
                                 hash.to_bytes().as_slice(),

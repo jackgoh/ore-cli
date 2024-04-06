@@ -18,18 +18,17 @@ mod utils;
 use std::sync::Arc;
 
 use clap::{command, Parser, Subcommand};
-use solana_sdk::signature::{read_keypair_file, Keypair};
 use solana_client::nonblocking::rpc_client::RpcClient;
-use solana_sdk::{
-    commitment_config::{CommitmentConfig},
-};
+use solana_client::rpc_client::RpcClient as ExcRpcClient;
+use solana_sdk::commitment_config::CommitmentConfig;
+use solana_sdk::signature::{read_keypair_file, Keypair};
 
 struct Miner {
     pub keypair_filepath: Option<String>,
     pub priority_fee: u64,
     pub cluster: String,
     pub client: RpcClient,
-    pub exec_client: RpcClient
+    pub exec_client: ExcRpcClient,
 }
 
 #[derive(Parser, Debug)]
@@ -178,11 +177,18 @@ async fn main() {
     let args = Args::parse();
     let cluster = args.rpc;
     let exec_cluster = args.exec_rpc;
-    println!("exec_cluster {}, read_cluster {} ",exec_cluster,cluster);
-    let client =  RpcClient::new_with_commitment(cluster.clone(), CommitmentConfig::confirmed());
-    let exec_client =  RpcClient::new_with_commitment(exec_cluster.clone(), CommitmentConfig::confirmed());
+    println!("exec_cluster {}, read_cluster {} ", exec_cluster, cluster);
+    let client = RpcClient::new_with_commitment(cluster.clone(), CommitmentConfig::confirmed());
+    let exec_client =
+        ExcRpcClient::new_with_commitment(exec_cluster.clone(), CommitmentConfig::confirmed());
 
-    let miner = Arc::new(Miner::new(cluster.clone(), args.priority_fee, args.keypair,client,exec_client));
+    let miner = Arc::new(Miner::new(
+        cluster.clone(),
+        args.priority_fee,
+        args.keypair,
+        client,
+        exec_client,
+    ));
 
     // Execute user command.
     match args.command {
@@ -220,7 +226,13 @@ async fn main() {
 }
 
 impl Miner {
-    pub fn new(cluster: String, priority_fee: u64, keypair_filepath: Option<String>, client: RpcClient,exec_client:RpcClient) -> Self {
+    pub fn new(
+        cluster: String,
+        priority_fee: u64,
+        keypair_filepath: Option<String>,
+        client: RpcClient,
+        exec_client: ExcRpcClient,
+    ) -> Self {
         Self {
             keypair_filepath,
             priority_fee,
