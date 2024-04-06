@@ -12,6 +12,7 @@ Once you have Rust installed, you can build the Ore CLI by running the following
 cargo build --release
 ```
 
+## Linux run mining script
 ```sh
 chmod +x mine.sh
 ./mine.sh --rpc https://api.mainnet-beta.solana.com/ --keypair ~/.config/solana/id.json
